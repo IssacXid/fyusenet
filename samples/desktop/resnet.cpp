@@ -24,6 +24,7 @@
 #ifdef FYUSENET_USE_GLFW
 #include <fyusenet/gl/glcontext.h>
 #endif
+#include <fyusenet/common/performance.h>
 
 //-------------------------------------- Global Variables ------------------------------------------
 
@@ -130,7 +131,9 @@ int main(int argc, char **argv) {
     if (opts.count("log") > 0) {
         net->enableLog(opts["log"].as<std::string>());
     }
+    tstamp start = fy_get_stamp();
     net->forward();
+    tstamp stop = fy_get_stamp();
 #ifdef FYUSENET_USE_GLFW
     static bool buttondown = false;
     glctx->sync();
@@ -192,6 +195,7 @@ int main(int argc, char **argv) {
     } else {
         std::cout<<"Could not match any class to the input\n";
     }
+    std::cout<<"Inference took "<<fy_elapsed_millis(start, stop)<<"ms (including texture upload and download)\n";
     // -------------------------------------------------------
     // Cleanup
     // -------------------------------------------------------

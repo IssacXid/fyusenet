@@ -11,6 +11,8 @@
 
 #include <unordered_map>
 #include <functional>
+#include <iostream>
+#include <fstream>
 
 //-------------------------------------- Project  Headers ------------------------------------------
 
@@ -385,6 +387,7 @@ Engine::state Engine::execute(ExecutionState& state, const GfxContextLink & cont
     using namespace gpu;
     tstamp start, end;
     std::string fname;
+    std::string tname;
     StateToken * stoken = state.state_;
     //-----------------------------------------------------------
     // Traverse through layers in ascending order of layer number
@@ -685,6 +688,15 @@ Engine::state Engine::execute(ExecutionState& state, const GfxContextLink & cont
         ++(state.current);
     } // while
     runs_++;
+    
+    if(writeResults_ && timings_){
+        if (!outputDir_.empty()) tname = outputDir_ + std::string("/timing_data.txt");
+        else tname = std::string("./timing_data.txt");
+        std::ofstream outputFile(tname);
+        for (const auto& pair : timingData_) outputFile << pair.first << " " << pair.second << std::endl;
+        std::cout << "Data has been written to " <<tname<< std::endl;
+    }
+
     return state::DONE;
 }
 
